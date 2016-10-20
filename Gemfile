@@ -27,6 +27,11 @@ gem 'multi_json'
 gem 'coder'
 gem 'redlock'
 
+gem 'puma'
+gem 'rack-ssl'
+gem 'sinatra'
+gem 'jwt'
+
 platform :ruby do
   gem 'jemalloc'
   gem 'pg'
@@ -39,4 +44,5 @@ group :test do
   gem 'database_cleaner'
   gem 'factory_girl'
   gem 'webmock'
+  gem 'sinatra-contrib'
 end

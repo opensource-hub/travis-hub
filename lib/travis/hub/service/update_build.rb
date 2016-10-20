@@ -28,6 +28,10 @@ module Travis
 
         private
 
+          def validate
+            EVENTS.include?(event) || unknown_event
+          end
+
           def update_jobs
             build.jobs.each { |job| job.reload.send(:"#{event}!", attrs) }
           end
@@ -38,10 +42,6 @@ module Travis
 
           def notify
             build.jobs.each { |job| NotifyWorkers.new(context).cancel(job) } if event == :cancel
-          end
-
-          def validate
-            EVENTS.include?(event) || unknown_event
           end
 
           def exclusive(&block)

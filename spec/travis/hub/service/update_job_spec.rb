@@ -1,10 +1,10 @@
 describe Travis::Hub::Service::UpdateJob do
   let(:redis) { Travis::Hub.context.redis }
-  let(:amqp)  { Travis::Amqp.any_instance }
   let(:job)   { FactoryGirl.create(:job, state: state, received_at: Time.now - 10) }
+  let(:amqp)  { Travis::Amqp.any_instance }
 
-  subject    { described_class.new(context, event, data) }
-  before     { amqp.stubs(:fanout) }
+  subject     { described_class.new(context, event, data) }
+  before      { amqp.stubs(:fanout) }
 
   describe 'receive event' do
     let(:state) { :queued }
@@ -66,14 +66,14 @@ describe Travis::Hub::Service::UpdateJob do
       expect(job.reload.canceled_at).to eql(now)
     end
 
-    it 'instruments #run' do
-      subject.run
-      expect(stdout.string).to include("Travis::Hub::Service::UpdateJob#run:completed event: cancel for repo=travis-ci/travis-core id=#{job.id}")
-    end
-
     it 'notifies workers' do
       amqp.expects(:fanout).with('worker.commands', type: 'cancel_job', job_id: job.id, source: 'hub')
       subject.run
+    end
+
+    it 'instruments #run' do
+      subject.run
+      expect(stdout.string).to include("Travis::Hub::Service::UpdateJob#run:completed event: cancel for repo=travis-ci/travis-core id=#{job.id}")
     end
   end
 
