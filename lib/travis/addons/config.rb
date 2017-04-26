@@ -34,7 +34,7 @@ module Travis
       end
 
       def notifications
-        @notifications ||= Travis::SecureConfig.decrypt(config.fetch(:notifications, {}) || {}, secure_key)
+        @notifications ||= config.fetch(:notifications, {})
       end
 
       private

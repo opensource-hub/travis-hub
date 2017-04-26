@@ -20,11 +20,19 @@ module Travis
       )
     end
 
-    def tasks(queue, name, *args)
+    def tasks(name, *args)
       client.push(
         'queue'   => queue.to_s,
         'class'   => 'Travis::Async::Sidekiq::Worker',
         'args'    => [nil, "Travis::Addons::#{name}::Task", 'perform', *args]
+      )
+    end
+
+    def live(*args)
+      client.push(
+        'queue'   => 'pusher-live',
+        'class'   => 'Travis::Async::Sidekiq::Worker',
+        'args'    => [nil, "Travis::Addons::Pusher::Task", 'perform', *args]
       )
     end
 
